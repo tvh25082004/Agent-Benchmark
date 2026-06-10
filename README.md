@@ -40,17 +40,3 @@ docker compose --profile full up        # All agent systems
 | **Magentic-One** | Centrally orchestrated multi-agent system |
 | **SWE-Agent** | Software engineering agent for SWE tasks |
 | **Middleware** | LLM API proxy that logs all requests/responses |
-
-## Citation
-
-```bibtex
-@misc{chen2026seeingelephantbenchmarkfailure,
-      title={Seeing the Whole Elephant: A Benchmark for Failure Attribution in LLM-based Multi-Agent Systems},
-      author={Mengzhuo Chen and Junjie Wang and Fangwen Mu and Yawen Wang and Zhe Liu and Huanxiang Feng and Qing Wang},
-      year={2026},
-      eprint={2604.22708},
-      archivePrefix={arXiv},
-      primaryClass={cs.MA},
-      url={https://arxiv.org/abs/2604.22708},
-}
-```
