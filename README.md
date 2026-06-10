@@ -1,10 +1,5 @@
 # Agent-Benchmark
 
-**TraceElephant** — A benchmark for **Failure Attribution in LLM-based Multi-Agent Systems**, accepted at **ACL 2026**.
-
-> Paper: [Seeing the Whole Elephant: A Benchmark for Failure Attribution in LLM-based Multi-Agent Systems](https://arxiv.org/abs/2604.22708)
-
-When a multi-agent system fails, TraceElephant automatically identifies which agent caused the failure and at which step.
 
 ## Directory Structure
 
