@@ -1,0 +1,91 @@
+services:
+  middleware:
+    build:
+      context: .
+      dockerfile: Dockerfile.middleware
+    container_name: te-middleware
+    ports:
+      - "8000:8000"
+    environment:
+      - MIDDLEWARE_HOST=0.0.0.0
+      - MIDDLEWARE_PORT=8000
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - traceelephant-net
+    restart: unless-stopped
+
+  captain-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.captain-agent
+    container_name: te-captain-agent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com}
+    env_file:
+      - .env
+    volumes:
+      - ./code/agent_system/Captain-Agent:/app
+      - captain-data:/app/data
+    networks:
+      - traceelephant-net
+    depends_on:
+      - middleware
+    profiles:
+      - full
+    restart: unless-stopped
+
+  magentic-one:
+    build:
+      context: .
+      dockerfile: Dockerfile.magentic-one
+    container_name: te-magentic-one
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com}
+    env_file:
+      - .env
+    volumes:
+      - ./code/agent_system/Magentic-One:/app
+      - magentic-data:/app/data
+    networks:
+      - traceelephant-net
+    depends_on:
+      - middleware
+    profiles:
+      - full
+    restart: unless-stopped
+
+  swe-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.swe-agent
+    container_name: te-swe-agent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SWE_AGENT_MODEL=${SWE_AGENT_MODEL:-gpt-4o}
+    env_file:
+      - .env
+    volumes:
+      - ./code/agent_system/SWE-agent:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - swe-data:/app/data
+    networks:
+      - traceelephant-net
+    depends_on:
+      - middleware
+    profiles:
+      - full
+    restart: unless-stopped
+
+volumes:
+  captain-data:
+  magentic-data:
+  swe-data:
+
+networks:
+  traceelephant-net:
+    driver: bridge

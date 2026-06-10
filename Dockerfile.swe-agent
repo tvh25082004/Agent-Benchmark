@@ -1,0 +1,41 @@
+FROM python:3.11-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY code/agent_system/SWE-agent/pyproject.toml .
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir uv && \
+    uv venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY code/agent_system/SWE-agent /app
+
+RUN uv pip install --no-cache-dir -e ".[dev]"
+
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    docker.io \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /app /app
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+ENV OPENAI_API_KEY=""
+ENV SWE_AGENT_MODEL="gpt-4o"
+
+ENTRYPOINT ["bash", "run_test.sh"]
